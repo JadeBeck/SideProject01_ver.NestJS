@@ -11,10 +11,9 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
-const user_entity_1 = require("./auth/entity/user.entity");
 const auth_middleware_1 = require("./middleware/auth.middleware");
-const auth_module_1 = require("./auth/auth.module");
-const movies_controller_1 = require("./movies/movies.controller");
+const movie_entity_1 = require("./movies/entities/movie.entity");
+const movies_module_1 = require("./movies/movies.module");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer
@@ -34,12 +33,12 @@ AppModule = __decorate([
                 username: 'root',
                 password: 'root',
                 database: 'test',
-                entities: [user_entity_1.User],
+                entities: [movie_entity_1.Movie],
                 synchronize: true,
             }),
-            auth_module_1.AuthModule
+            movies_module_1.MoviesModule
         ],
-        controllers: [app_controller_1.AppController, movies_controller_1.MoviesController],
+        controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })
 ], AppModule);
