@@ -23,7 +23,7 @@ import { MoviesModule } from './movies/movies.module';
             password: 'root',
             database: 'test',
             entities: [/*User,*/ Movie],
-            synchronize: true,  //synchronize: true는 운영에서는 사용하지 마세요.
+            synchronize: true,  //synchronize: true는 운영에서는 사용하지 마세요
         }),
         // UsersModule,
         //AuthModule,

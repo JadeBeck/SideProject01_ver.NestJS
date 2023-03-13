@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import {Injectable, NotFoundException} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
 import {getConnection} from 'typeorm';
@@ -10,42 +10,49 @@ export class MoviesService {
         @InjectRepository(Movie)
         private moviesRepository: Repository<Movie>,
     ) {
-    }
+    };
 
     getAll(): Promise<Movie[]> {
         return this.moviesRepository.find();
-    }
+    };
 
-   /* searchYear(searchingYear: number): Promise<Movie[]> {
-        return this.moviesRepository.find({where: year >= searchingYear})
-    }*/
+    /* searchYear(searchingYear: number): Promise<Movie[]> {
+         return this.moviesRepository.find({where: year >= searchingYear})
+     };*/
 
     findOne(id: string): Promise<Movie> {
-        return this.moviesRepository.findOne({where: { id }});
-    }
+        const movie = this.moviesRepository.findOne({where: {id}});
+        if (!movie) {
+            throw new NotFoundException(`Movie with id #${id} Not found.`);
+        } else {
+            return movie;
+        } //if문 안타고 전부 다 리턴됨... 이율 모르겠다;;
+    };
 
-    async create(movie: Movie): Promise<void> {
-        await this.moviesRepository.save(movie);
-    }
+    async create(movieData: Movie): Promise<void> {
+       //JSON.stringify(movieData.genre)
+        await this.moviesRepository.save(movieData);
+    };
 
-    async remove(id: string): Promise<void> {
+    async deleteOne(id: string): Promise<void> {
+        await this.findOne(id);
         await this.moviesRepository.delete(id);
-    }
+    };
 
-    async update(id: string, movie: Movie): Promise<void> {
-        const existMovie = await this.moviesRepository.findOne({where: { id}});
+    async update(id: string, movieData: Movie): Promise<void> {
+        const existMovie = await this.moviesRepository.findOne({where: {id}});
         if (existMovie) {
-            await getConnection()
+            await getConnection()   //여기서  Connection "default" was not found 에러나는데 모르겠음 ㅠㅠ
                 .createQueryBuilder()
                 .update(Movie)
                 .set({
-                    title: movie.title,
-                    year: movie.year,
-                    genre: movie.genre
+                    title: movieData.title,
+                    year: movieData.year,
+                    genre: movieData.genre
                 })
                 .where('id = :id', {id})
                 .execute();
         }
-    }
+    };
 
 }
